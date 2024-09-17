@@ -1,26 +1,36 @@
 <?php
-include 'db_config.php';
+header('Content-Type: application/json');
 
-$user_id = $_GET['user_id'];
-$username = $_GET['username'];
+$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
 
-// Check if the user already exists
-$sql = "SELECT * FROM users WHERE telegram_id='$user_id'";
-$result = $conn->query($sql);
+if ($user_id) {
+    $db = new SQLite3('pizza_game.db');
 
-if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-    $earnings = $row['earnings'] + 1;
-    $sql = "UPDATE users SET earnings='$earnings' WHERE telegram_id='$user_id'";
+    // Check if user exists
+    $stmt = $db->prepare('SELECT * FROM users WHERE user_id = :user_id');
+    $stmt->bindValue(':user_id', $user_id, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    
+    if ($result->fetchArray()) {
+        // User exists, update earnings
+        $stmt = $db->prepare('UPDATE users SET earnings = earnings + 1 WHERE user_id = :user_id');
+        $stmt->bindValue(':user_id', $user_id, SQLITE3_TEXT);
+        $stmt->execute();
+    } else {
+        // New user
+        $stmt = $db->prepare('INSERT INTO users (user_id, username, earnings) VALUES (:user_id, :username, 1)');
+        $stmt->bindValue(':user_id', $user_id, SQLITE3_TEXT);
+        $stmt->bindValue(':username', isset($_GET['username']) ? $_GET['username'] : '', SQLITE3_TEXT);
+        $stmt->execute();
+    }
+
+    // Fetch updated earnings
+    $stmt = $db->prepare('SELECT earnings FROM users WHERE user_id = :user_id');
+    $stmt->bindValue(':user_id', $user_id, SQLITE3_TEXT);
+    $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+
+    echo json_encode(['earnings' => $result['earnings']]);
 } else {
-    $earnings = 1;
-    $sql = "INSERT INTO users (telegram_id, username, earnings) VALUES ('$user_id', '$username', '$earnings')";
+    echo json_encode(['error' => 'User ID is required']);
 }
-
-if ($conn->exec($sql)) {
-    echo json_encode(['earnings' => $earnings]);
-} else {
-    echo json_encode(['error' => 'Error updating earnings']);
-}
-
-$conn->close();
 ?>

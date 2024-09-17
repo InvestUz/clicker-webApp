@@ -11,13 +11,15 @@
     <div id="app">
         <h1>🏆 Pizza Tap Leaderboard 🏆</h1>
         <ol>
-            <li v-for="user in leaderboard">{{ user.username }}: {{ user.earnings }} 🍕</li>
+            <li v-for="user in leaderboard" :key="user.username">
+                {{ user.username }}: {{ user.earnings }} 🍕
+            </li>
         </ol>
         <button @click="goBack">Back to Game</button>
     </div>
 
     <script>
-        var app = new Vue({
+        new Vue({
             el: '#app',
             data: {
                 leaderboard: []

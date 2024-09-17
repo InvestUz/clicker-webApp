@@ -21,7 +21,7 @@
     </div>
 
     <script>
-        var app = new Vue({
+        new Vue({
             el: '#app',
             data: {
                 earnings: 0,
@@ -32,7 +32,10 @@
                 earnPizza: function() {
                     this.clicked = true;
                     setTimeout(() => { this.clicked = false; }, 200);
-                    const userId = 'telegram_user_id'; // Replace with dynamic Telegram ID
+                    
+                    // Replace 'telegram_user_id' with dynamic Telegram ID if available
+                    const userId = 'telegram_user_id'; 
+
                     fetch(`/backend/tap.php?user_id=${userId}`)
                         .then(response => response.json())
                         .then(data => {
