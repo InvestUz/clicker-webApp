@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap to Earn Pizza</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #pizza {
+            cursor: pointer;
+            width: 300px;
+        }
+        #earnings {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tap the Pizza to Earn!</h1>
+    <img id="pizza" src="https://static.vecteezy.com/system/resources/previews/024/589/160/large_2x/top-view-pizza-with-ai-generated-free-png.png" alt="Pizza">
+    <div id="earnings">Earnings: 0</div>
+
+    <script>
+        document.getElementById('pizza').addEventListener('click', function() {
+            fetch('/click', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('earnings').textContent = 'Earnings: ' + data.earnings;
+                });
+        });
+    </script>
+</body>
+</html>
