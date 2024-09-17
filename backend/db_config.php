@@ -1,12 +1,19 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pizza_game";
+// SQLite database file
+$db_file = __DIR__ . '/pizza_game.db';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Create (connect to) SQLite database in file
+$conn = new SQLite3($db_file);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Create the 'users' table if it doesn't exist
+$conn->exec("CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    telegram_id TEXT NOT NULL,
+    username TEXT,
+    earnings INTEGER DEFAULT 0
+)");
+
+if (!$conn) {
+    die("Connection failed: " . $conn->lastErrorMsg());
 }
 ?>
