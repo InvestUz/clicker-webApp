@@ -2,9 +2,9 @@
 header('Content-Type: application/json');
 
 // Enable error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0); // Don't display errors in the browser
+ini_set('log_errors', 1); // Enable error logging
+ini_set('error_log', 'backend/logs/error.log'); // Specify the log file
 
 try {
     $db = new SQLite3('pizza_game.db');
@@ -19,6 +19,7 @@ try {
 
     echo json_encode($leaderboard);
 } catch (Exception $e) {
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    error_log('Database error: ' . $e->getMessage());
+    echo json_encode(['error' => 'Database error occurred']);
 }
 ?>
