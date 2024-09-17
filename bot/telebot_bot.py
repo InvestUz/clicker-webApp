@@ -1,7 +1,7 @@
 import telebot
 import requests
 
-API_TOKEN = '7362520301:AAHukHuMun4ykWd51-y4sI1SNaFm43-mQ5Y'
+API_TOKEN = '7041160117:AAEUZIlYBEjFoJzZgVyElg8EOehAm9aofbE'
 bot = telebot.TeleBot(API_TOKEN)
 
 # Start command handler
