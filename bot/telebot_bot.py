@@ -1,7 +1,7 @@
 import telebot
 import requests
 
-API_TOKEN = 'YOUR_TELEGRAM_BOT_API_TOKEN'
+API_TOKEN = '7362520301:AAHukHuMun4ykWd51-y4sI1SNaFm43-mQ5Y'
 bot = telebot.TeleBot(API_TOKEN)
 
 # Start command handler
@@ -14,27 +14,29 @@ def send_welcome(message):
 def send_pizza(message):
     user_id = message.from_user.id
     username = message.from_user.username
-    url = f"http://your-backend-url.com/backend/tap.php?user_id={user_id}&username={username}"
-    response = requests.get(url)
+    url = f"https://clicker.toshkentinvest.uz/backend/tap.php?user_id={user_id}&username={username}"
     
-    if response.status_code == 200:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
         data = response.json()
         earnings = data.get('earnings', 0)
         bot.reply_to(message, f"🍕 You earned more slices! Total pizza slices: {earnings}")
-    else:
-        bot.reply_to(message, "Something went wrong, try again!")
+    except requests.RequestException as e:
+        bot.reply_to(message, f"Something went wrong: {str(e)}")
 
 # Leaderboard command handler
 @bot.message_handler(commands=['leaderboard'])
 def leaderboard(message):
-    url = "http://your-backend-url.com/backend/leaderboard.php"
-    response = requests.get(url)
+    url = "https://clicker.toshkentinvest.uz/backend/leaderboard.php"
     
-    if response.status_code == 200:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
         leaderboard_data = response.json()
         leaderboard_text = "\n".join([f"{i+1}. {user['username']}: {user['earnings']} 🍕" for i, user in enumerate(leaderboard_data)])
         bot.reply_to(message, f"🏆 Pizza Tap Leaderboard 🏆\n\n{leaderboard_text}")
-    else:
-        bot.reply_to(message, "Error fetching leaderboard, try again later.")
+    except requests.RequestException as e:
+        bot.reply_to(message, f"Error fetching leaderboard: {str(e)}")
 
 bot.polling()
